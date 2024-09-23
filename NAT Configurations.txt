@@ -1,0 +1,29 @@
+NAT
+
+en
+conf t
+no ip domain-lookup
+
+
+int gig 0/0/0
+ip nat inside
+ip add 192.168.1.1 255.255.255.0
+no shut
+
+int gig 0/0/1
+ip nat outside
+ip add 144.12.11.1 255.255.255.0
+no shut
+
+access-list 1 permit 172.16.0.0 0.0.255.255
+access-list 1 permit 192.168.1.0 0.0.0.255
+
+ip nat inside source list 1 interface gig 0/0/1 overload
+
+router ospf 1
+router-id 1.1.1.1
+network 192.168.1.0 0.0.0.255 area 0
+network 144.12.11.0 0.0.0.255 area 0
+passive-int gig 0/0/1
+
+
